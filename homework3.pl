@@ -81,24 +81,44 @@ quickSort([H|T], LS):-
         quickSort(SMALL, S), 
         quickSort(BIG, B), 
         append(S, [H|B], FILLINHERE). 
-/* Comment describing hybridSort */
-hybridSort(LIST, bubbleSort, BIGALG, THRESHOLD, SLIST):-
-length(LIST, N), N=< THRESHOLD,      
-      bubbleSort(LIST, FILLINHERE).
-hybridSort(LIST, insertionSort, BIGALG, THRESHOLD, SLIST):-
-length(LIST, N), N=<T,
-      insertionSort(LIST, SLIST).
+
+/* hybridSort dynamically uses a chosen recursive or
+ * iterative sorting algorithm on the LIST depending
+ * on the number of remaining unsorted elements. */
+
+/* If the length of LIST is <= THRESHOLD, the choice of
+ *  'small' algorithm is used to sort LIST.
+ * Valid options for SMALL are
+ *  'bubbleSort' and 'insertionSort'.
+ * Note that once LIST is shorter than THRESHOLD, we
+ *  no longer need to recursively call hybridSort
+ *  because the list will never get any longer
+ *  and BIGALG will no longer be necessary. */
+hybridSort(LIST, bubbleSort, _BIGALG, THRESHOLD, SLIST):-
+	length(LIST, N), N=< THRESHOLD,      
+    bubbleSort(LIST, SLIST).
+
+hybridSort(LIST, insertionSort, _BIGALG, THRESHOLD, SLIST):-
+	length(LIST, N), N=<THRESHOLD,
+    insertionSort(LIST, SLIST).
+
+/* If the length of LIST is > THRESHOLD, the choice of
+ * 'large' algorithm is used to sort LIST.
+ * Valid options for BIGALG are 'bubbleSort' and
+ * 'insertionSort'. */
 hybridSort(LIST, SMALL, mergeSort, THRESHOLD, SLIST):-
-length(LIST, N), N> THRESHOLD,      
-split_in_half(LIST, L1, L2),
+	length(LIST, N), N> THRESHOLD,      
+	split_in_half(LIST, L1, L2),
     hybridSort(L1, SMALL, mergeSort, THRESHOLD, S1),
     hybridSort(L2, SMALL, mergeSort, THRESHOLD, S2),
     merge(S1,S2, SLIST).
+    
 hybridSort([H|T], SMALL, quickSort, THRESHOLD, SLIST):-
 length(LIST, N), N > THRESHOLD,      
 split(H, T, L1, L2),
     FILLINHERE several lines in the body of this clause
     append(S1, [H|S2], SLIST).
+    
 hybridSort([H|T], SMALL, quickSort, THRESHOLD, SLIST):-
 FILLINHERE the full body of this clause
     
