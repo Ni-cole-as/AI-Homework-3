@@ -66,21 +66,28 @@ merge([H1|T1], [H2|T2], [H2|T]):-
 FILLINHERE =< FILLINHERE
 merge([H1|T1], T2, FILLINHERE).
    
-/* Comment describing split for quickSort */
+/* Splits list [H|T] into two lists SMALL and BIG
+   where SMALL is every element in the list smaller
+   than the H or the Head of the list and BIG is
+   every element larger than the Head. 
+   Base case is empty*/
 split(_, [],[],[]). 
  split(X, [H|T], [H|SMALL], BIG):- 
 H =< X, 
-    split(X, T, SMALL, FILLINHERE).    
+    split(X, T, SMALL, BIG).    
  split(X, [H|T], SMALL, [H|BIG]):-
     X =< H,
-    split(X, T, FILLINHERE, BIG). 
-/* Comment describing quickSort */
+    split(X, T, SMALL, BIG). 
+/* Sorts list into ascending order list "LS"
+   "LS" is a sorted [H|T] where SMALL and BIG
+   are the resultinng splits of [H|T]
+   Base case is empty list                  */
 quickSort([], []).
 quickSort([H|T], LS):-
-        split(H, T, SMALL, FILLINHERE), 
+        split(H, T, SMALL, BIG), 
         quickSort(SMALL, S), 
         quickSort(BIG, B), 
-        append(S, [H|B], FILLINHERE). 
+        append(S, [H|B], LS). 
 /* Comment describing hybridSort */
 hybridSort(LIST, bubbleSort, BIGALG, THRESHOLD, SLIST):-
 length(LIST, N), N=< THRESHOLD,      
